@@ -1,6 +1,6 @@
 package models
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 
 /**
  * This is the User model that defines the user structure in the database
@@ -11,5 +11,5 @@ import java.time.{LocalDate, LocalDateTime}
  * @param dob the date of birth of the user
  * @param toc the time of creation of this user account accurate to milliseconds
  */
-case class User(unique_id: String, username: String, pass: String, fullname: String, dob: LocalDate, toc: LocalDateTime)
+case class User(unique_id: String, email: String, location: String, name: String, age: Int, phone: String, pass: String, toc: LocalDateTime)
 

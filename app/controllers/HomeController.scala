@@ -1,16 +1,14 @@
 package controllers
 
-import java.time.{LocalDate, LocalDateTime}
-
-import api.misc.Message
 import api.utils.UUIDGenerator.randomUUID
 import auth.AuthAction
 import dao.UserDAO
-import javax.inject._
 import models.User
 import play.api.libs.json.Json
 import play.api.mvc._
 
+import java.time.LocalDateTime
+import javax.inject._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -58,14 +56,13 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
     implicit request: Request[AnyContent] => {
       body match {
         case Some(data) =>
-          val username = data("username").head
+          val email = data("email").head
           val pass = data("pass").head
-          val fullname = data("fullname").head
-          val dob = data("dob").head.split("-").map(_.toInt)
-          users.createUser(User(randomUUID, username, pass, fullname, LocalDate.of(dob(2), dob(1), dob(0)), LocalDateTime.now())).map(x => Ok(Json.obj(
-            ("success", Json.toJson(x._1)),
-            ("message", Json.toJson(Message.message(x._2)))
-          )))
+          val name = data("name").head
+          val age = data("age").head.toInt
+          val phone = data("phone").head
+          val location = data("location").head
+          users.createUser(User(randomUUID, email, location, name, age, phone, pass, toc = LocalDateTime.now())).map(x => Ok(""))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -82,10 +79,10 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
     implicit request: Request[AnyContent] => {
       body match {
         case Some(data) =>
-          val username = data("username").head
+          val email = data("email").head
           val pass = data("pass").head
           val update = data("new_detail").head
-          users.updateUser(users.getUser(username, pass), part, update).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
+          users.updateUser(users.getUser(email, pass), part, update).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -102,9 +99,9 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
     implicit request: Request[AnyContent] => {
       body match {
         case Some(data) =>
-          val username = data("username").head
+          val email = data("email").head
           val pass = data("pass").head
-          users.getUser(username, pass).map(v => Ok(Json.obj(("success", Json.toJson(v.isEmpty)))))
+          users.getUser(email, pass).map(v => Ok(Json.obj(("success", Json.toJson(v.isEmpty)))))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -121,9 +118,9 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
     implicit request: Request[AnyContent] => {
       body match {
         case Some(data) =>
-          val username = data("username").head
+          val email = data("email").head
           val pass = data("pass").head
-          users.deleteUser(username, pass).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
+          users.deleteUser(email, pass).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
