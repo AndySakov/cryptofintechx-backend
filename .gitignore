@@ -14,5 +14,6 @@ server.pid
 *.iml
 /dist/
 .cache
+.env
 .bloop/
 .idea/

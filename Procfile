@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/cryptofintechx -Dhttp.port=${PORT} -Dplay.http.secret.key=${PLAY_SECRET_KEY}

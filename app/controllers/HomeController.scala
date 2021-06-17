@@ -42,6 +42,11 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
     request.body.asFormUrlEncoded
   }
 
+  def index(): Action[AnyContent] = Action{
+    implicit request: Request[AnyContent] =>
+      Ok(views.html.index())
+  }
+
   /**
    * User creation handler
    *

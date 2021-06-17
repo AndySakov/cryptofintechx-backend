@@ -1,4 +1,4 @@
-name := """scala-rest-api-with-auth"""
+name := """cryptofintechx"""
 organization := "com.shiftio"
 
 version := "1.0"
@@ -14,21 +14,15 @@ libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "5.0.0"
 libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.15"
 
 resolvers += Resolver.mavenLocal
-val circeVersion = "0.12.3"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
-).map(_ % circeVersion)
+).map(_ % "0.12.3")
 
 libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0",
   "com.pauldijou" %% "jwt-core" % "5.0.0",
   "com.auth0" % "jwks-rsa" % "0.6.1"
 )
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.frisbee.controllers._"
-
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "com.frisbee.binders._"
