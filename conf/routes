@@ -12,16 +12,16 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 GET     /                   controllers.HomeController.index()
 
 +nocsrf
-GET    /auth/user          controllers.HomeController.authUser
+GET    /auth/user          controllers.HomeController.authUser()
 
 +nocsrf
-GET    /create/user      controllers.HomeController.createUser
+GET    /create/user      controllers.HomeController.createUser()
 
 +nocsrf
 PUT     /update/user/:part  controllers.HomeController.updateUser(part: String)
 
 +nocsrf
-DELETE  /remove/user        controllers.HomeController.removeUser
+DELETE  /remove/user        controllers.HomeController.removeUser()
 
 
 
