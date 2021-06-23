@@ -7,7 +7,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import java.sql.SQLIntegrityConstraintViolationException
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -28,12 +28,15 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
    * @param newbie the user to create
    * @return a future with the result of the operation
    */
-  def createUser(newbie: User): Future[Cr8Result] = db.run((Users += newbie).asTry) map {
+  def createUser(newbie: User): Future[(Boolean, String)] = db.run({
+//    sql"""insert into users (name, email, country, ADDRESS, dob, pass, phone, TOC, UUID) values ('${newbie.name}', '${newbie.email}', '${newbie.country}', '${newbie.address}', '${newbie.dob.toString}', '${newbie.pass}', '${newbie.phone}', '${newbie.toc.toString}', '${newbie.unique_id}')""".as[Int].asTry
+    (Users += newbie) asTry
+  }) map {
     case Failure(exception) => exception match {
-      case _: SQLIntegrityConstraintViolationException => (false, Message.DUPLICATE_USER)
-      case _ => (false, Message.UNKNOWN_ERROR)
+      case _: SQLIntegrityConstraintViolationException => (false, "DUPLICATE_USER")
+      case v => (false, v.toString)
     }
-    case Success(_) => (true, Message.SUCCESS)
+    case Success(_) => (true, "SUCCESS")
   }
 
   /**
@@ -77,13 +80,14 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
   private class UsersTable(tag: Tag) extends Table[User](tag, "users") {
     def unique_id: Rep[String] = column[String]("UUID", O.Unique)
     def email: Rep[String] = column[String]("email", O.Unique, O.PrimaryKey)
-    def location: Rep[String] = column[String]("location")
+    def country: Rep[String] = column[String]("country")
     def name: Rep[String] = column[String]("name")
-    def age: Rep[Int] = column[Int]("age")
+    def dob: Rep[LocalDate] = column[LocalDate]("dob")
     def phone: Rep[String] = column[String]("phone")
     def pass: Rep[String] = column[String]("pass")
     def toc: Rep[LocalDateTime] = column[LocalDateTime]("TOC")
+    def address: Rep[String] = column[String]("address")
 
-    def * = (unique_id, email, location, name, age, phone, pass, toc) <> (User.tupled, User.unapply)
+    def * = (unique_id, email, address, country, name, dob, phone, pass, toc) <> (User.tupled, User.unapply)
   }
 }
