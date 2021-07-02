@@ -9,11 +9,23 @@
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
+
+# UI RENDERING
 GET     /                   controllers.HomeController.index()
 
+GET     /forgot             controllers.HomeController.forgot()
+
+GET     /todo               controllers.HomeController.TODO
+
+
+
+
+# CRUD STUFF
 POST   /auth/user          controllers.HomeController.authUser()
 
 POST   /create/user      controllers.HomeController.createUser()
+
+# POST    /reset          controllers.HomeController.reset()
 
 PUT    /update/user/:part  controllers.HomeController.updateUser(part: String)
 

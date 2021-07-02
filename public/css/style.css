@@ -1562,3 +1562,8 @@ section {
   font-size: 13px;
   color: #fff;
 }
+
+#forgot-card {
+    padding: 3rem;
+    margin-top: 10rem;
+}

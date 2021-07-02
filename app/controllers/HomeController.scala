@@ -1,6 +1,8 @@
 package controllers
 
 import api.utils.UUIDGenerator.randomUUID
+import api.utils.Utils.body
+import courier.Defaults._
 import dao.UserDAO
 import models.User
 import play.api.libs.json.Json
@@ -10,7 +12,7 @@ import views.html.helper.CSRF
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, LocalDateTime}
 import javax.inject._
-import scala.concurrent.ExecutionContext.Implicits.global
+//import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -20,6 +22,7 @@ import scala.concurrent.Future
 @Singleton
 class HomeController @Inject()(users: UserDAO, val controllerComponents: ControllerComponents) extends BaseController {
 
+  // UI RENDERING
   /**
    * Error 404 custom return handler
    *
@@ -32,20 +35,17 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
     NotFound(views.html.err404())
   }
 
-  /**
-   * A function to extract the body of a request sent as xxx-form-url-encoded
-   * @param request the request to extract the body from
-   * @return the extracted body
-   */
-  def body(implicit request: Request[AnyContent]): Option[Map[String, Seq[String]]] = {
-    request.body.asFormUrlEncoded
-  }
-
   def index(): Action[AnyContent] = Action{
     implicit request: Request[AnyContent] =>
       Ok(views.html.index(CSRF.formField))
   }
 
+  def forgot(): Action[AnyContent] = Action{
+    implicit request: Request[AnyContent] =>
+      Ok(views.html.forgot(CSRF.formField))
+  }
+
+  // CRUD STUFFS
   /**
    * User creation handler
    *
@@ -64,6 +64,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
           val address = data("address").head
           val phone = data("phone").head
           val country = data("country").head
+          val category = data("category").head
           users.createUser(User(
             unique_id = randomUUID,
             email = email,
@@ -73,8 +74,9 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
             dob = dob,
             phone = phone,
             pass = pass,
-            toc = LocalDateTime.now())
-          ).map(x => Ok(x._2.toString))
+            toc = LocalDateTime.now(),
+            category = category)
+          ).map(x => Ok(x._2))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -113,7 +115,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
         case Some(data) =>
           val email = data("email").head
           val pass = data("pass").head
-          users.getUser(email, pass).map(v => Ok("SUCCESS"))
+          users.getUser(email, pass).map(_ => Ok("SUCCESS"))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -137,5 +139,33 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
       }
     }
   }
+
+//  def reset(): Action[AnyContent] = Action.async{
+//    implicit request: Request[AnyContent] =>
+//      body match {
+//        case Some(data) =>
+//          val email = data("email").head
+//          val mailer = Mailer("smtp.gmail.com", 587)
+//            .auth(true)
+//            .as(sys.env("MAILER_USER"), sys.env("MAILER_PASS"))
+//            .startTls(true)()
+//
+//          mailer(Envelope.from(InternetAddress.parse(sys.env("MAILER_HOST")).head)
+//            .to(InternetAddress.parse(email).head)
+//            .subject("RESET YOUR PASSWORD")
+//            .content(Text(s"""
+//                             |<html>
+//                             |  <body>
+//                             |    <h1>Click the link below to reset your password!</h1>
+//                             |    <a href="https://google.com">RESET PASSWORD</a>
+//                             |  </body>
+//                             |</html>""".stripMargin))).map{
+//            _ =>
+//              Redirect("/forgot").flashing(flash("Message Sent!", "success"): _*)
+//          }
+//        case None => Future.successful(Forbidden("No data gotten!"))
+//
+//      }
+//  }
 }
  

@@ -11,5 +11,5 @@ import java.time.{LocalDate, LocalDateTime}
  * @param dob the date of birth of the user
  * @param toc the time of creation of this user account accurate to milliseconds
  */
-case class User(unique_id: String, email: String, address: String, country: String, name: String, dob: LocalDate, phone: String, pass: String, toc: LocalDateTime)
+case class User(unique_id: String, email: String, address: String, country: String, name: String, dob: LocalDate, phone: String, pass: String, toc: LocalDateTime, category: String)
 

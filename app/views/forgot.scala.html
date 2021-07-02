@@ -1,0 +1,86 @@
+@(csrf: Html)(implicit flash: Flash)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+	<title>Forgot Password?</title>
+	<meta content="" name="description">
+	<meta content="" name="keywords">
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+	<!-- Vendor CSS Files -->
+	<link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+	<link href="/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+	<link href="/assets/vendor/owl.carousel//assets/owl.carousel.min.css" rel="stylesheet">
+	<link href="/assets/vendor/venobox/venobox.css" rel="stylesheet">
+	<link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+	<link href="/assets/vendor/aos/aos.css" rel="stylesheet">
+
+	<!-- Font Awesome -->
+	<link
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+			rel="stylesheet"
+	/>
+	<!-- Google Fonts -->
+	<link
+			href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+			rel="stylesheet"
+	/>
+	<!-- MDB -->
+	<link
+			href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css"
+			rel="stylesheet"
+	/>
+
+	<link href="/assets/css/style.css" rel="stylesheet">
+	<link href="/assets/css/mdb.min.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container h-100">
+	<div class="row align-items-center h-100">
+		<div class="alert alert-dismissible alert-secondary @flash.get("notice-type").getOrElse("")" @flash.get("showing").getOrElse("hidden") role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true" size="0.3px">x</span>
+			</button>
+			@flash.get("notice").getOrElse("")
+		</div>
+		<div class="col-5 mx-auto">
+			<div class="card card-block h-100 border-primary justify-content-center" id="forgot-card">
+				<div class="panel-body">
+					<div class="text-center">
+						<h3><i class="fa fa-lock fa-4x"></i></h3>
+						<h2 class="text-center">Forgot Password?</h2>
+						<p>You can reset your password here.</p>
+						<div class="panel-body">
+
+							<form class="form" action="/todo" method="post" enctype="application/x-www-form-urlencoded">
+								@csrf
+								<fieldset>
+									<div class="form-group">
+										<div class="input-group">
+											<span class="input-group-addon"><i class="glyphicon glyphicon-envelope color-blue"></i></span>
+
+											<input id="emailInput" placeholder="Email Address" class="form-control" type="email" oninvalid="setCustomValidity('Please enter a valid email address!')" onchange="try{setCustomValidity('')}catch(e){}" required name="email">
+										</div>
+									</div>
+									<div class="form-group">
+										<input class="btn btn-lg btn-primary btn-block" value="Reset Password" type="submit">
+									</div>
+								</fieldset>
+							</form>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
