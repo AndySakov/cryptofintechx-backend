@@ -96,7 +96,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
           val email = data("email").head
           val pass = data("pass").head
           val update = data("new_detail").head
-          users.updateUser(users.getUser(email, pass), part, update).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
+          users.updateUser(email, pass, part, update).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }

@@ -2,6 +2,8 @@ package dao
 
 
 import api.misc.Message
+import api.misc.exceptions._
+import api.utils.BCrypt._
 import models.User
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -29,8 +31,7 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
    * @return a future with the result of the operation
    */
   def createUser(newbie: User): Future[(Boolean, String)] = db.run({
-//    sql"""insert into users (name, email, country, ADDRESS, dob, pass, phone, TOC, UUID) values ('${newbie.name}', '${newbie.email}', '${newbie.country}', '${newbie.address}', '${newbie.dob.toString}', '${newbie.pass}', '${newbie.phone}', '${newbie.toc.toString}', '${newbie.unique_id}')""".as[Int].asTry
-    (Users += newbie) asTry
+    (Users += newbie.copy(pass = hashpw(newbie.pass).getOrElse(throw PasswordNotHashableException("Password could not be hashed!")))) asTry
   }) map {
     case Failure(exception) => exception match {
       case _: SQLIntegrityConstraintViolationException => (false, "DUPLICATE_USER")
@@ -41,19 +42,22 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
 
   /**
    * Function to update a detail in a user entry
-   * @param oldie the old version of the user entry
    * @param part the detail to update
    * @param new_detail the new detail
    * @return a future with unit
    */
-  def updateUser(oldie: Future[Seq[User]], part: String, new_detail: String): Future[Unit] = {
-    val user = Await.result(oldie, 10 seconds).head
-    val op: DBIOAction[Unit, NoStream, Effect.Write] = part match {
-      case "username" => Users.filter(x => x.unique_id === user.unique_id).map(_.email).update(new_detail).map(_ => ())
-      case "pass" => Users.filter(x => x.unique_id === user.unique_id).map(_.pass).update(new_detail).map(_ => ())
-      case "name" => Users.filter(x => x.unique_id === user.unique_id).map(_.name).update(new_detail).map(_ => ())
+  def updateUser(email: String, pass: String, part: String, new_detail: String): Future[Unit] = {
+    Await.result(getUser(email, pass), 10 seconds) match {
+      case Left(_) => throw UserUpdateFailedException("Could not update user because user not found!")
+      case Right(user) =>
+        val op: DBIOAction[Unit, NoStream, Effect.Write] = part match {
+          case "email" => Users.filter(x => x.unique_id === user.unique_id).map(_.email).update(new_detail).map(_ => ())
+          case "password" => Users.filter(x => x.unique_id === user.unique_id).map(_.pass).update(hashpw(new_detail).getOrElse(throw PasswordNotHashableException("Password could not be hashed!"))).map(_ => ())
+          case "name" => Users.filter(x => x.unique_id === user.unique_id).map(_.name).update(new_detail).map(_ => ())
+          case "phone" => Users.filter(x => x.unique_id === user.unique_id).map(_.phone).update(new_detail).map(_ => ())
+        }
+        db.run(op)
     }
-    db.run(op)
   }
 
   /**
@@ -62,8 +66,30 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
    * @param pass the password of the user to select
    * @return a future with a sequence containing the user if it exists
    */
-  def getUser(email: String, pass: String): Future[Seq[User]] = {
-    db.run[Seq[User]](Users.filter(v => v.email === email && v.pass === pass).result)
+  def getUser(email: String, pass: String): Future[Either[Boolean, User]] = {
+    db.run(Users.filter(v => v.email === email).result) map {
+      case result: Seq[UsersTable#TableElementType] => checkpw(pass, result.head.pass) match {
+        case Right(_) => Right(result.head)
+        case Left(_) => Left(false)
+      }
+      case _ => Left(false)
+    }
+  }
+
+  /**
+   * Function to select a user entry in the database
+   * @param userID the unique id of the user to select
+   * @return a future containing either a boolean or a user
+   */
+  def getUser(userID: String): Future[Either[Boolean, User]] = {
+    db.run(Users.filter(v => v.unique_id === userID).result) map {
+      case result: Seq[UsersTable#TableElementType] => if(result.isEmpty){
+        Left(false)
+      } else {
+        Right(result.head)
+      }
+      case _ => Left(false)
+    }
   }
 
   /**
@@ -72,8 +98,17 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
    * @param pass the password of the user to delete
    * @return a future with unit
    */
-  def deleteUser(email: String, pass: String): Future[Unit] = {
-    db.run(Users.filter(x => x.email === email && x.pass === pass).delete).map(_ => ())
+  def deleteUser(email: String, pass: String): Future[Future[Either[Boolean, Boolean]]] = {
+    getUser(email, pass) map {
+      case Right(user) =>
+        db.run{
+          Users.filter(_.email === user.email).delete
+        } map {
+          case 1 => Right(true)
+          case _ => Left(false)
+        }
+      case Left(_) => throw UserDeleteFailedException("")
+    }
   }
 
 
