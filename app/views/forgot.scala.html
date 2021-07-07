@@ -1,3 +1,4 @@
+@import play.twirl.api.Html
 @(csrf: Html)(implicit flash: Flash)
 <!DOCTYPE html>
 <html lang="en">
@@ -44,12 +45,6 @@
 <body>
 <div class="container h-100">
 	<div class="row align-items-center h-100">
-		<div class="alert alert-dismissible alert-secondary @flash.get("notice-type").getOrElse("")" @flash.get("showing").getOrElse("hidden") role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true" size="0.3px">x</span>
-			</button>
-			@flash.get("notice").getOrElse("")
-		</div>
 		<div class="col-5 mx-auto">
 			<div class="card card-block h-100 border-primary justify-content-center" id="forgot-card">
 				<div class="panel-body">

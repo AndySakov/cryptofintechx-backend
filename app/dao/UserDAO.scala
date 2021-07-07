@@ -8,8 +8,8 @@ import models.User
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
-import java.sql.SQLIntegrityConstraintViolationException
-import java.time.{LocalDate, LocalDateTime}
+import java.sql.{SQLIntegrityConstraintViolationException, Timestamp}
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -30,14 +30,16 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
    * @param newbie the user to create
    * @return a future with the result of the operation
    */
-  def createUser(newbie: User): Future[(Boolean, String)] = db.run({
-    (Users += newbie.copy(pass = hashpw(newbie.pass).getOrElse(throw PasswordNotHashableException("Password could not be hashed!")))) asTry
-  }) map {
-    case Failure(exception) => exception match {
-      case _: SQLIntegrityConstraintViolationException => (false, "DUPLICATE_USER")
-      case v => (false, v.toString)
+  def createUser(newbie: User): Future[(Boolean, String)] = {
+    db.run({
+      (Users += newbie.copy(pass = hashpw(newbie.pass).getOrElse(throw PasswordNotHashableException("Password could not be hashed!")))) asTry
+    }) map {
+      case Failure(exception) => exception match {
+        case _: SQLIntegrityConstraintViolationException => throw EmailTakenException("An account exists with this email")
+        case v => throw UserCreateFailedException(v.getMessage)
+      }
+      case Success(_) => (true, "SUCCESS")
     }
-    case Success(_) => (true, "SUCCESS")
   }
 
   /**
@@ -113,14 +115,14 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
 
 
   private class UsersTable(tag: Tag) extends Table[User](tag, "users") {
-    def unique_id: Rep[String] = column[String]("UUID", O.Unique)
+    def unique_id: Rep[String] = column[String]("UUID", O.PrimaryKey)
     def email: Rep[String] = column[String]("email", O.Unique, O.PrimaryKey)
     def country: Rep[String] = column[String]("country")
     def name: Rep[String] = column[String]("name")
     def dob: Rep[LocalDate] = column[LocalDate]("dob")
     def phone: Rep[String] = column[String]("phone")
     def pass: Rep[String] = column[String]("pass")
-    def toc: Rep[LocalDateTime] = column[LocalDateTime]("TOC")
+    def toc: Rep[Timestamp] = column[Timestamp]("TOC")
     def address: Rep[String] = column[String]("address")
     def category: Rep[String] = column[String]("category")
 

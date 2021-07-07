@@ -1,5 +1,5 @@
 @import play.twirl.api.Html
-@(csrf: Html)
+@(csrf: Html)(implicit flash: Flash)
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,7 +50,7 @@
 <header id="header" class="fixed-top ">
 	<div class="container d-flex align-items-center justify-content-between">
 
-		<h1 class="logo"><a href="/">CRYPTOFINTECHX<span>.</span></a></h1>
+		<h1 class="logo"><a class="logo-text" href="/">CRYPTOFINTECHX<span>.</span></a></h1>
 		<!-- Uncomment below if you prefer to use an image logo -->
 		<!-- <a href="index.html" class="logo"><img src="/assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -60,10 +60,8 @@
 				<li><a href="#about">About</a></li>
 				<li><a href="#services">Services</a></li>
 				<li><a href="#contact">Contact</a></li>
-
 			</ul>
 		</nav><!-- .nav-menu -->
-
 		<button type="button" class="get-started-btn scrollto" data-toggle="modal" data-target="#modalLRForm">
 			Login / Sign Up
 		</button>
@@ -74,7 +72,12 @@
 <!-- ======= Hero Section ======= -->
 <section id="hero" class="d-flex align-items-center justify-content-center">
 	<div class="container" data-aos="fade-up">
-
+		<div class="alert alert-dismissible alert-secondary @flash.get("notice-type").getOrElse("") float-left" @flash.get("showing").getOrElse("hidden") role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true" size="0.3px">x</span>
+			</button>
+			@flash.get("notice").getOrElse("")
+		</div>
 		<div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
 			<div class="col-xl-6 col-lg-8">
 				<h1>Welcome to</h1>
@@ -641,9 +644,9 @@
 						  <label for="modalLRInput16">Address</label>
 					  </div>
 
-					  <div class="md-form form-sm mb-4">
+					  <div class="md-form form-sm mb-1">
 						  <i class="fas fa-globe prefix" aria-hidden="true"></i>
-						  <select id="modalLRInput17" style="margin-left: 32px; border: none; width: 405px; font-family: 'Roboto', sans-serif;" name="country" class="form-control form-control-sm custom-select" required>
+						  <select id="modalLRInput17" style="margin-left: 32px; border: none;" name="country" class="form-select" required>
 							  <option value="null" selected disabled> Country</option>
 							  <option value="Afghanistan">Afghanistan</option>
 							  <option value="Åland Islands">Åland Islands</option>
@@ -894,7 +897,7 @@
 
 					  <div class="md-form form-sm mb-4">
 						  <i class="fas fa-industry prefix" aria-hidden="true"></i>
-						  <select id="modalLRInput18" style="margin-left: 32px; border: none; width: 405px; font-family: 'Roboto', sans-serif;" name="category" class="form-control form-control-sm custom-select" required>
+						  <select id="modalLRInput18" style="margin-left: 32px; border: none;" name="category" class="form-select" required>
 							  <option value="null" selected disabled> Investment Category</option>
 							  <option value="Normal">Normal</option>
 							  <option value="Silver">Silver</option>

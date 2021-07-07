@@ -9,8 +9,9 @@ import play.api.libs.json.Json
 import play.api.mvc._
 import views.html.helper.CSRF
 
+import java.sql.Timestamp
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{Instant, LocalDate}
 import javax.inject._
 //import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -74,7 +75,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
             dob = dob,
             phone = phone,
             pass = pass,
-            toc = LocalDateTime.now(),
+            toc = Timestamp.from(Instant.now()),
             category = category)
           ).map(x => Ok(x._2))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
@@ -115,7 +116,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
         case Some(data) =>
           val email = data("email").head
           val pass = data("pass").head
-          users.getUser(email, pass).map(_ => Ok("SUCCESS"))
+          users.getUser(email, pass).map(_ => Ok(views.html.dashboard(CSRF.formField)))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }

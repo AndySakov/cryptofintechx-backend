@@ -1567,3 +1567,73 @@ section {
     padding: 3rem;
     margin-top: 10rem;
 }
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #131313;
+  border-radius: 30px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 30px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.form-select {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+}
+
+@media (max-width: 768px) {
+  .form-select {
+    width: 73vw;
+    font-size: 0.9rem;
+  }
+  a.logo-text {
+    font-size: 0.8rem;
+  }
+
+  #modalLRForm {
+    margin-top: 1rem;
+  }
+
+  #panel8{
+    margin-top: -5rem;
+    /* overflow-y: hidden; */
+  }
+}
+@media (min-width: 1024px) {
+  .form-select {
+    width: 22vw ;
+    font-size: 0.9rem;
+  }
+
+  #modalLRForm {
+    margin-top: -2rem;
+  }
+
+  #panel8{
+    margin-top: -3rem;
+    overflow-y: hidden;
+  }
+
+  .modal-body{
+    position: absolute;
+  }
+}
+
+.modal-open {
+  overflow:hidden;
+  overflow-y: hidden;
+  padding-right:0 !important;
+}
