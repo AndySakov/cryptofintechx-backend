@@ -1,5 +1,6 @@
 @import play.twirl.api.Html
-@(csrf: Html)(implicit flash: Flash)
+@import models.User
+@(csrf: Html, user: User)(implicit flash: Flash)
 <!--
 =========================================================
 * * Black Dashboard - v1.0.1

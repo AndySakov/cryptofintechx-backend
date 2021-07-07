@@ -1,5 +1,6 @@
 package controllers
 
+import api.misc.exceptions.UserNotFoundAtLoginException
 import api.utils.UUIDGenerator.randomUUID
 import api.utils.Utils.body
 import courier.Defaults._
@@ -116,7 +117,10 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
         case Some(data) =>
           val email = data("email").head
           val pass = data("pass").head
-          users.getUser(email, pass).map(_ => Ok(views.html.dashboard(CSRF.formField)))
+          users.getUser(email, pass).map {
+            case Left(_) => throw UserNotFoundAtLoginException("Wrong login details!")
+            case Right(user) => Ok(views.html.dashboard(CSRF.formField, user))
+          }
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
