@@ -35,7 +35,7 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
       (Users += newbie.copy(pass = hashpw(newbie.pass).getOrElse(throw PasswordNotHashableException("Password could not be hashed!")))) asTry
     }) map {
       case Failure(exception) => exception match {
-        case _: SQLIntegrityConstraintViolationException => throw EmailTakenException("An account exists with this email")
+        case _: SQLIntegrityConstraintViolationException => throw EmailTakenException("An account already exists for this email")
         case v => throw UserCreateFailedException(v.getMessage)
       }
       case Success(_) => (true, "SUCCESS")

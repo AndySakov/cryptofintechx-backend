@@ -2,6 +2,7 @@ package controllers
 
 import api.misc.exceptions.UserNotFoundAtLoginException
 import api.utils.UUIDGenerator.randomUUID
+import api.utils.Utils
 import api.utils.Utils.body
 import courier.Defaults._
 import dao.UserDAO
@@ -47,6 +48,16 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
       Ok(views.html.forgot(CSRF.formField))
   }
 
+  def todo(): Action[AnyContent] = Action {
+    implicit request: Request[AnyContent] =>
+      Ok(views.html.todo())
+  }
+
+  def logout(): Action[AnyContent] = Action.async {
+    implicit request: Request[AnyContent] =>
+      Future.successful(Redirect("/").withNewSession)
+  }
+
   // CRUD STUFFS
   /**
    * User creation handler
@@ -78,7 +89,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
             pass = pass,
             toc = Timestamp.from(Instant.now()),
             category = category)
-          ).map(x => Ok(x._2))
+          ).map(x => Redirect("/").flashing(Utils.flash("Welcome to CRYPTOFINTECHX.", "success"): _*))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -98,7 +109,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
           val email = data("email").head
           val pass = data("pass").head
           val update = data("new_detail").head
-          users.updateUser(email, pass, part, update).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
+          users.updateUser(email, pass, part, update).map(_ => Redirect("/").flashing(Utils.flash("User profile updated. Login again", "success"): _*))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
@@ -139,7 +150,7 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
         case Some(data) =>
           val email = data("email").head
           val pass = data("pass").head
-          users.deleteUser(email, pass).map(_ => Ok(Json.obj(("success", Json.toJson(true)))))
+          users.deleteUser(email, pass).map(_ => Redirect("/").flashing(Utils.flash("User deleted successfully!", "success"): _*))
         case None => Future(Forbidden(Json.obj(("error", Json.toJson("Request contained no data!")))))
       }
     }
