@@ -301,7 +301,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 15px;
   z-index: 9999;
   overflow-y: auto;
-  background: #fff;
+  background: #242424;
   transition: ease-in-out 0.2s;
   opacity: 0;
   visibility: hidden;
@@ -318,7 +318,7 @@ h1, h2, h3, h4, h5, h6 {
 .mobile-nav a {
   display: block;
   position: relative;
-  color: #151515;
+  color: #fff;
   padding: 10px 20px;
   font-weight: 500;
   outline: none;
@@ -645,7 +645,7 @@ section {
   border: 1px solid #ebebeb;
   padding: 80px 20px;
   transition: all ease-in-out 0.3s;
-  background: #fff;
+  background: #151515;
 }
 
 .services .icon-box .icon {
@@ -674,7 +674,7 @@ section {
 }
 
 .services .icon-box h4 a {
-  color: #151515;
+  color: #fff;
   transition: ease-in-out 0.3s;
 }
 
@@ -1128,8 +1128,8 @@ section {
 # Contact
 --------------------------------------------------------------*/
 .contact .info {
-  width: 100%;
-  background: #fff;
+  width: 100%:
+  color: #fff;
 }
 
 .contact .info i {
@@ -1151,14 +1151,14 @@ section {
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 5px;
-  color: #151515;
+  color: #fff;
 }
 
 .contact .info p {
   padding: 0 0 0 60px;
   margin-bottom: 0;
   font-size: 14px;
-  color: #484848;
+  color: #c9c7c7;
 }
 
 .contact .info .email, .contact .info .phone {
@@ -1167,7 +1167,7 @@ section {
 
 .contact .php-email-form {
   width: 100%;
-  background: #fff;
+  background: #151515;
 }
 
 .contact .php-email-form .form-group {
@@ -1421,7 +1421,7 @@ section {
 }
 
 #footer .footer-top {
-  background: #151515;
+  background: #242323;
   border-bottom: 1px solid #222222;
   padding: 60px 0 30px 0;
 }
@@ -1520,7 +1520,7 @@ section {
 
 #footer .footer-top .footer-newsletter form {
   margin-top: 30px;
-  background: #fff;
+  background: #363636;
   padding: 6px 10px;
   position: relative;
   border-radius: 4px;
@@ -1563,11 +1563,6 @@ section {
   color: #fff;
 }
 
-#forgot-card {
-    padding: 3rem;
-    margin-top: 10rem;
-}
-
 ::-webkit-scrollbar {
   width: 7px;
 }
@@ -1594,6 +1589,94 @@ section {
   font-weight: 300;
 }
 
+.modal-open {
+  overflow:hidden;
+  overflow-y: hidden;
+  padding-right:0 !important;
+}
+
+.close {
+  position: fixed;
+  margin-left: 10px;
+  z-index: 2;
+  margin-top: -35px;
+}
+
+.flash{
+  position: fixed;
+  float: left;
+}
+
+html {
+    background-color: #101111 !important;
+}
+html, body, input, textarea, select, button {
+    background-color: #363636;
+    outline: none;
+}
+html, body, input, textarea, select, button {
+    border-color: #4a4947;
+    color: #d0cbc3;
+}
+a {
+    color: #327cd2;
+}
+table {
+    border-color: #403f3d;
+}
+::placeholder {
+    color: #a59e92;
+}
+::selection {
+    background-color: #034ca4;
+    color: #e5e2dc;
+}
+::-moz-selection {
+    background-color: #034ca4;
+    color: #e5e2dc;
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    background-color: #464b00 !important;
+    color: #d0cbc3 !important;
+}
+::-webkit-scrollbar {
+    background-color: #131515;
+    color: #afa99e;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #202222;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #282a2a;
+}
+::-webkit-scrollbar-thumb:active {
+    background-color: #323435;
+}
+::-webkit-scrollbar-corner {
+    background-color: #101111;
+}
+* {
+    scrollbar-color: #202222 #131515;
+}
+h1, h2, h3, h4, h5, p {
+  color: #adadad;
+}
+
+#forgot-card {
+  padding: 3rem;
+  margin-top: 10rem;
+  margin-bottom: 10rem;
+  background: #151515;
+  min-width: 500px;
+}
+/* i.fas{
+    color: #adadad;
+}
+input.form-control {
+    color: #f0f0f0;
+} */
 @media (max-width: 768px) {
   .form-select {
     width: 73vw;
@@ -1610,6 +1693,16 @@ section {
   #panel8{
     margin-top: -5rem;
     /* overflow-y: hidden; */
+  }
+
+  .toast-div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 3;
+    margin-top: -15rem; 
+    margin-right: -7rem;
+    width: 20vw;
   }
 }
 @media (min-width: 1024px) {
@@ -1630,17 +1723,13 @@ section {
   .modal-body{
     position: absolute;
   }
-}
 
-.modal-open {
-  overflow:hidden;
-  overflow-y: hidden;
-  padding-right:0 !important;
-}
-
-.close {
-  position: fixed;
-  margin-left: 10px;
-  z-index: 2;
-  margin-top: -35px;
+  .toast-div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 3;
+    margin-top: -15rem; 
+    margin-right: -7rem;
+  }
 }

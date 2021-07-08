@@ -13,17 +13,19 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # UI RENDERING
 GET     /                   controllers.HomeController.index()
 
-GET     /forgot             controllers.HomeController.forgot()
+#GET     /forgot             controllers.HomeController.forgot()
 
-GET     /todo               controllers.HomeController.TODO
+GET     /todo               controllers.HomeController.todo()
 
 
 
 
 # CRUD STUFF
-POST   /auth/user          controllers.HomeController.authUser()
+POST   /dashboard          controllers.HomeController.authUser()
 
 POST   /create/user      controllers.HomeController.createUser()
+
+GET    /logout         controllers.HomeController.logout()
 
 # POST    /reset          controllers.HomeController.reset()
 
