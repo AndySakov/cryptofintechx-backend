@@ -43,9 +43,9 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
       Ok(views.html.index(CSRF.formField))
   }
 
-  def forgot(): Action[AnyContent] = Action{
+  def about(): Action[AnyContent] = Action{
     implicit request: Request[AnyContent] =>
-      Ok(views.html.forgot(CSRF.formField))
+      Ok(views.html.about())
   }
 
   def todo(): Action[AnyContent] = Action {
@@ -74,14 +74,12 @@ class HomeController @Inject()(users: UserDAO, val controllerComponents: Control
           val pass = data("pass").head
           val name = data("name").head
           val dob = LocalDate.parse(data("dob").head, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-          val address = data("address").head
           val phone = data("phone").head
           val country = data("country").head
           val category = data("category").head
           users.createUser(User(
             unique_id = randomUUID,
             email = email,
-            address = address,
             country = country,
             name = name,
             dob = dob,
