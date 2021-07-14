@@ -13,7 +13,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # UI RENDERING
 GET     /                   controllers.HomeController.index()
 
-#GET     /forgot             controllers.HomeController.forgot()
+GET     /about             controllers.HomeController.about()
 
 GET     /todo               controllers.HomeController.todo()
 
