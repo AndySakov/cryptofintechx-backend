@@ -3,7 +3,7 @@ package controllers
 import api.misc.exceptions.UserNotFoundAtLoginException
 import api.utils.UUIDGenerator.randomUUID
 import api.utils.Utils
-import api.utils.Utils.body
+import api.utils.Utils._
 import courier.Defaults._
 import dao.UserDAO
 import models.User

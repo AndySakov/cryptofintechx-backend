@@ -5,7 +5,7 @@ version := "1.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.13.4"
+scalaVersion := "2.13.6"
 
 resolvers += Resolver.mavenLocal
 resolvers += Resolver.bintrayRepo("mattmoore", "bcrypt-scala")
@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",
   "io.circe" %% "circe-generic",
   "io.circe" %% "circe-parser"
-).map(_ % "0.12.3")
+).map(_ % "0.14.1")
 
 libraryDependencies ++= Seq(
   "com.pauldijou" %% "jwt-play" % "5.0.0",

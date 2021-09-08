@@ -1,6 +1,5 @@
 package dao
 
-
 import api.misc.Message
 import api.misc.exceptions._
 import api.utils.BCrypt._
@@ -57,6 +56,7 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
           case "password" => Users.filter(x => x.unique_id === user.unique_id).map(_.pass).update(hashpw(new_detail).getOrElse(throw PasswordNotHashableException("Password could not be hashed!"))).map(_ => ())
           case "name" => Users.filter(x => x.unique_id === user.unique_id).map(_.name).update(new_detail).map(_ => ())
           case "phone" => Users.filter(x => x.unique_id === user.unique_id).map(_.phone).update(new_detail).map(_ => ())
+          case "category" => Users.filter(x => x.unique_id === user.unique_id).map(_.category).update(new_detail).map(_ => ())
         }
         db.run(op)
     }
@@ -122,9 +122,9 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
     def dob: Rep[LocalDate] = column[LocalDate]("dob")
     def phone: Rep[String] = column[String]("phone")
     def pass: Rep[String] = column[String]("pass")
-    def toc: Rep[Timestamp] = column[Timestamp]("TOC")
     def category: Rep[String] = column[String]("category")
+    def toc: Rep[Timestamp] = column[Timestamp]("TOC")
 
-    def * = (unique_id, email, country, name, dob, phone, pass, toc, category) <> (User.tupled, User.unapply)
+    def * = (unique_id, email, country, name, dob, phone, pass, category, toc) <> (User.tupled, User.unapply)
   }
 }

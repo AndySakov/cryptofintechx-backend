@@ -18,3 +18,8 @@ server.pid
 .bloop/
 .idea/
 mpc.txt
+conf/db
+.metals
+.bsp
+.vscode
+project/metals.sbt
