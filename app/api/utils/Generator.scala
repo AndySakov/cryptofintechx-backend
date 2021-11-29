@@ -2,7 +2,7 @@ package api.utils
 
 import scala.util.Random
 
-object UUIDGenerator {
+object Generator {
   private val all: String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%&*?"
   private val space: Int = all.length
 
@@ -13,7 +13,5 @@ object UUIDGenerator {
     token.mkString("")
   }
 
-  def randomUUID: String = {
-    random(20)
-  }
+  def randomID: String = random(16)
 }

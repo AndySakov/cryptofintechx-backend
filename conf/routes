@@ -15,13 +15,17 @@ GET     /                   controllers.HomeController.index()
 
 GET     /about             controllers.HomeController.about()
 
+GET     /dashboard         controllers.HomeController.dashboard(path="")
+
+GET     /dashboard/*path         controllers.HomeController.dashboard(path: String)
+
 GET     /todo               controllers.HomeController.todo()
 
 
 
 
 # CRUD STUFF
-POST   /dashboard          controllers.HomeController.authUser()
+POST   /auth          controllers.HomeController.authUser()
 
 POST   /create/user      controllers.HomeController.createUser()
 
@@ -38,7 +42,7 @@ DELETE  /remove/user        controllers.HomeController.removeUser()
 
 
 
-# GET     /                 controllers.HomeController.fof(O = "")
+# GET     /                 controllers.HomeController.notFound(O = "")
 
-GET     /*O               controllers.HomeController.fof(O: String)
+GET     /*O               controllers.HomeController.notFound(O: String)
 

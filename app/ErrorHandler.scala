@@ -24,7 +24,7 @@ class ErrorHandler @Inject() (
 
   override def onForbidden(request: RequestHeader, message: String): Future[Result] = {
     Future.successful(
-      Forbidden(views.html.err401())
+      Forbidden(views.html.err401("/"))
     )
   }
 

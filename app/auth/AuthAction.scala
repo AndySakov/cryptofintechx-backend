@@ -21,7 +21,7 @@ class AuthAction @Inject()(bodyParser: BodyParsers.Default)(implicit ec: Executi
   override def invokeBlock[A](request: Request[A], block: AuthRequest[A] => Future[Result]): Future[Result] =
     authSession(request) match {
       case Some(authRequest) => block(authRequest)
-      case None => Future.successful(Results.Unauthorized(views.html.err401()))
+      case None => Future.successful(Results.Unauthorized(views.html.err401("/")))
     }
 
   // Helper for extracting the token value

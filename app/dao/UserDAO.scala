@@ -1,6 +1,8 @@
 package dao
 
 import api.misc.Message
+import api.misc.Category._
+import api.misc.Category
 import api.misc.exceptions._
 import api.utils.BCrypt._
 import models.User
@@ -17,12 +19,14 @@ import scala.util.{Failure, Success}
 
 class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) {
 
-  type Cr8Result = (Boolean, Message.Value)
+  type CreateResult = (Boolean, Message.Value)
   val dbConfig = dbConfigProvider.get[JdbcProfile]
   val db = dbConfig.db
   import dbConfig.profile.api._
 
-  private val Users = TableQuery[UsersTable]
+  implicit val categoryMapper = MappedColumnType.base[Category, String](_.toString, Category.withName(_))
+
+  val Users = TableQuery[UsersTable]
 
   /**
    * Function to create a new user
@@ -52,11 +56,11 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
       case Left(_) => throw UserUpdateFailedException("Could not update user because user not found!")
       case Right(user) =>
         val op: DBIOAction[Unit, NoStream, Effect.Write] = part match {
-          case "email" => Users.filter(x => x.unique_id === user.unique_id).map(_.email).update(new_detail).map(_ => ())
-          case "password" => Users.filter(x => x.unique_id === user.unique_id).map(_.pass).update(hashpw(new_detail).getOrElse(throw PasswordNotHashableException("Password could not be hashed!"))).map(_ => ())
-          case "name" => Users.filter(x => x.unique_id === user.unique_id).map(_.name).update(new_detail).map(_ => ())
-          case "phone" => Users.filter(x => x.unique_id === user.unique_id).map(_.phone).update(new_detail).map(_ => ())
-          case "category" => Users.filter(x => x.unique_id === user.unique_id).map(_.category).update(new_detail).map(_ => ())
+          case "email" => Users.filter(x => x.user_id === user.user_id).map(_.email).update(new_detail).map(_ => ())
+          case "password" => Users.filter(x => x.user_id === user.user_id).map(_.pass).update(hashpw(new_detail).getOrElse(throw PasswordNotHashableException("Password could not be hashed!"))).map(_ => ())
+          case "name" => Users.filter(x => x.user_id === user.user_id).map(_.name).update(new_detail).map(_ => ())
+          case "phone" => Users.filter(x => x.user_id === user.user_id).map(_.phone).update(new_detail).map(_ => ())
+          case "category" => Users.filter(x => x.user_id === user.user_id).map(_.category).update(Category.withName(new_detail)).map(_ => ())
         }
         db.run(op)
     }
@@ -84,7 +88,7 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
    * @return a future containing either a boolean or a user
    */
   def getUser(userID: String): Future[Either[Boolean, User]] = {
-    db.run(Users.filter(v => v.unique_id === userID).result) map {
+    db.run(Users.filter(v => v.user_id === userID).result) map {
       case result: Seq[UsersTable#TableElementType] => if(result.isEmpty){
         Left(false)
       } else {
@@ -114,17 +118,18 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
   }
 
 
-  private class UsersTable(tag: Tag) extends Table[User](tag, "users") {
-    def unique_id: Rep[String] = column[String]("UUID", O.PrimaryKey)
-    def email: Rep[String] = column[String]("email", O.Unique, O.PrimaryKey)
+  class UsersTable(tag: Tag) extends Table[User](tag, "users") {
+    def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def user_id: Rep[String] = column[String]("user_id", O.Unique)
+    def email: Rep[String] = column[String]("email")
     def country: Rep[String] = column[String]("country")
     def name: Rep[String] = column[String]("name")
     def dob: Rep[LocalDate] = column[LocalDate]("dob")
     def phone: Rep[String] = column[String]("phone")
     def pass: Rep[String] = column[String]("pass")
-    def category: Rep[String] = column[String]("category")
-    def toc: Rep[Timestamp] = column[Timestamp]("TOC")
+    def category: Rep[Category] = column[Category]("category")
+    def createdAt: Rep[Timestamp] = column[Timestamp]("createdAt")
 
-    def * = (unique_id, email, country, name, dob, phone, pass, category, toc) <> (User.tupled, User.unapply)
+    def * = (id, user_id, email, country, name, dob, phone, pass, category, createdAt).mapTo[User]
   }
 }

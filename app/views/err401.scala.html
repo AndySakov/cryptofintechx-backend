@@ -1,4 +1,4 @@
-@()
+@(redirect: String)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +6,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Unauthorized Access | JustBuy Online Store</title>
+  <title>Access Denied | CRYPTOFINTECHX.</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="@routes.Assets.versioned("vendors/mdi/css/materialdesignicons.min.css")" />
   <link rel="stylesheet" href="@routes.Assets.versioned("vendors/css/vendor.bundle.base.css")" />
@@ -16,9 +16,9 @@
   <!-- inject:css -->
   <!-- endinject -->
   <!-- Layout styles -->
-  <link rel="stylesheet" href="@routes.Assets.versioned("css/local.css")" />
+  <link rel="stylesheet" href="@routes.Assets.versioned("css/fof.css")" />
   <!-- End layout styles -->
-  <link rel="shortcut icon" href="@routes.Assets.versioned("img/favicon.png")" />
+  <link rel="shortcut icon" href="@routes.Assets.versioned("images/favicon.png")" />
 </head>
 <body>
 <div class="container-scroller">
@@ -33,12 +33,12 @@
             <div class="col-lg-6 error-page-divider text-lg-left pl-lg-4">
               <h2>SORRY!</h2>
               <h3 class="font-weight-light">You are not allowed to access this resource without signing in first.</h3>
-              <h6 class="font-weight-light"><a class="text-black" href="/login">Login and try again.</a></h6>
+              <h6 class="font-weight-light"><a class="text-black" href="/?rdr=@redirect">Login and try again.</a></h6>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-12 mt-xl-2">
-              <p class="text-white font-weight-medium text-center">&copy; @{java.time.Year.now.toString} <a class="text-black" href="/login">JustBuy&trade;</a>.  All rights reserved.</p>
+              <p class="text-white font-weight-medium text-center">&copy; @{java.time.Year.now.toString} <a class="text-black" href="">CRYPTOFINTECHX.</a>.  All rights reserved.</p>
             </div>
           </div>
         </div>
