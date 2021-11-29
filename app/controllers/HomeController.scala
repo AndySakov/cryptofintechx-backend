@@ -42,14 +42,16 @@ class HomeController @Inject()(users: UserDAO, sessions: SessionDAO, val control
     val token = request.session.get("token").getOrElse("null")
     sessions.validateSession(user, Token(token)) match {
       case true => Future.successful(
-        Await.result(users.getUser(user), 5 seconds) match {
-          case Left(_) => throw UserNotFoundAtLoginException("You might need to login again as your user no longer exists.")
-          case Right(user) => action(user)
-        }
+      Await.result(users.getUser(user), 5 seconds) match {
+        case Left(_) => throw UserNotFoundAtLoginException("You might need to login again as your user no longer exists.")
+        case Right(user) => action(user)
+      }
       )
-      case false => Future.successful(
-      sessionExpired(request.path)
-      )
+      case false => 
+        sessions.deleteSession(Token(token))
+        Future.successful(
+          sessionExpired(request.path)
+        )
     }
   }
   def notFound(O: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
