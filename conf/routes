@@ -3,46 +3,18 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 
-# An example controller showing a sample home page
-
-
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-
-
-# UI RENDERING
-GET     /                   controllers.HomeController.index()
-
-GET     /about             controllers.HomeController.about()
-
-GET     /dashboard         controllers.HomeController.dashboard(path="")
-
-GET     /dashboard/*path         controllers.HomeController.dashboard(path: String)
-
-GET     /todo               controllers.HomeController.todo()
-
-
-
 
 # CRUD STUFF
-POST   /auth          controllers.HomeController.authUser()
++nocsrf
+POST   /api/auth/user          controllers.HomeController.authUser()
 
-POST   /create/user      controllers.HomeController.createUser()
+POST   /api/create/user      controllers.HomeController.createUser()
 
-GET    /logout         controllers.HomeController.logout()
+POST    /api/logout         controllers.HomeController.logout()
 
 # POST    /reset          controllers.HomeController.reset()
 
-PUT    /update/user/:part  controllers.HomeController.updateUser(part: String)
+PUT    /api/update/user/:user_id  controllers.HomeController.updateUser(user_id: String)
 
-DELETE  /remove/user        controllers.HomeController.removeUser()
-
-
-
-
-
-
-# GET     /                 controllers.HomeController.notFound(O = "")
-
-GET     /*O               controllers.HomeController.notFound(O: String)
+DELETE  /api/delete/user/:user_id        controllers.HomeController.deleteUser(user_id: String)
 

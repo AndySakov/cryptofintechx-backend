@@ -1,17 +1,18 @@
 package dao
 
-import javax.inject.Inject
-import scala.concurrent.{Await, ExecutionContext, Future}
+import api.misc.SessionTypeImpl
+import api.misc.SessionTypeImpl._
+import api.utils.Generator._
+import api.utils.Utils.exec
+import models.{Session, Token}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
-import models.Session
-import models.Token
-import java.time.Instant
-import java.sql.{SQLIntegrityConstraintViolationException, Timestamp}
-import java.time.temporal.ChronoUnit;
-import api.utils.Generator._
 
-import scala.concurrent.duration.DurationInt
+import java.sql.Timestamp
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 class SessionDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider, users: UserDAO)(implicit executionContext: ExecutionContext)  {
 	
@@ -22,14 +23,34 @@ class SessionDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider, users: 
 	private val Sessions = TableQuery[SessionsTable]
 	
 	def newSession(user_id: String): Token = {
-		val token = Token(random(32))
-		Await.result(db.run(Sessions += Session(0L, randomID, user_id, token, Timestamp.from(Instant.now()), Timestamp.from(Instant.now().plus(1, ChronoUnit.HOURS)))).map(_ => token), 5 seconds)
+		val newToken = Token(random(32))
+		val current = Sessions.filter(session => session.user_id === user_id)
+		val now = Instant.now()
+		val timestampNow = Timestamp.from(now)
+		val anHourFromNow = Timestamp.from(now.plus(1, ChronoUnit.HOURS))
+		if (exec(db.run(current.exists.result))) {
+			exec(db.run(current.map(token => (token.token, token.createdAt, token.expiresAt)).update((newToken, timestampNow, anHourFromNow))))
+			newToken
+		} else {
+			exec(db.run(Sessions += Session(0L, randomID, user_id, newToken, timestampNow, anHourFromNow)).map(_ => newToken))
+		}
 	}
 	
-	def validateSession(user_id: String, token: Token): Boolean = {
-		user_id match { 
-			case x if x equalsIgnoreCase "null" => false
-			case _ => Await.result(db.run(Sessions.filter(session => session.user_id === user_id && session.token === token && session.expiresAt > Timestamp.from(Instant.now())).result).map(res => res.size == 1), 5 seconds)
+	def validateSession(token: Token): SessionType = {
+		val sessionList = exec(db.run(Sessions.filter(session => session.token === token).result).map(res => res))
+		token match {
+			case Token(x) if x equalsIgnoreCase "null" => SessionTypeImpl.NOT_FOUND
+			case _ =>
+				if(sessionList.nonEmpty) {
+					val current = sessionList.head
+					if(Timestamp.from(Instant.now()).before(current.expiresAt)) {
+						VALID
+					} else {
+						EXPIRED
+					}
+				} else {
+					SessionTypeImpl.NOT_FOUND
+				}
 		}
 	}
 

@@ -1,12 +1,13 @@
-import api.misc.exceptions._
-import javax.inject._
-import play.api.http.DefaultHttpErrorHandler
+import api.misc.Message.PathNotFound
+import api.misc.Responses._
 import play.api._
-import play.api.mvc._
+import play.api.http.DefaultHttpErrorHandler
 import play.api.mvc.Results._
+import play.api.mvc._
 import play.api.routing.Router
-import api.utils.Utils.flash
 
+import java.util.concurrent.TimeoutException
+import javax.inject._
 import scala.concurrent._
 
 @Singleton
@@ -22,29 +23,25 @@ class ErrorHandler @Inject() (
     )
   }
 
-  override def onForbidden(request: RequestHeader, message: String): Future[Result] = {
-    Future.successful(
-      Forbidden(views.html.err401("/"))
-    )
-  }
+//  override def onForbidden(request: RequestHeader, message: String): Future[Result] = {
+//    Future.successful(
+//      Forbidden(errorResponse(ForbiddenError))
+//    )
+//  }
 
   override def onNotFound(request: RequestHeader, message: String): Future[Result] = {
     Future.successful(
-      NotFound(views.html.err404())
+      NotFound(errorResponse(PathNotFound(request.path)))
     )
   }
 
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     exception match {
-      case UserNotFoundAtLoginException(reason) => Future.successful(Redirect("/").flashing(flash(reason, "danger"): _*))
-      case EmailTakenException(reason) => Future.successful(Redirect("/").flashing(flash(reason, "danger"): _*))
-      case UserCreateFailedException(reason) => Future.successful(Redirect("/").flashing(flash(reason, "danger"): _*))
-
-      case UserCreateSuccess(reason) => Future.successful(Redirect("/").flashing(flash(reason, "success"): _*))
-      case UserUpdateSuccess(reason) => Future.successful(Redirect("/").flashing(flash(reason, "success"): _*).withNewSession)
-      case UserDeleteSuccess(reason) => Future.successful(Redirect("/").flashing(flash(reason, "success"): _*).withNewSession)
-
+      case tx: TimeoutException =>
+        Future.successful(
+          InternalServerError(serverErrorResponse(tx))
+        )
       case _ => super.onServerError(request, exception)
     }
   }

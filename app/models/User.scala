@@ -2,7 +2,7 @@ package models
 
 import java.sql.Timestamp
 import java.time.LocalDate
-import api.misc.Category.Category
+import api.misc.CategoryImpl.Category
 
 /**
  * This is the User model that defines the user structure in the database
@@ -16,5 +16,5 @@ import api.misc.Category.Category
  * @param country the country of origin
  * @param createdAt the time of creation of this user account accurate to milliseconds
  */
-final case class User(id: Long = 0L, user_id: String, email: String, country: String, name: String, dob: LocalDate, phone: String, pass: String, category: Category, createdAt: Timestamp)
+final case class User(id: Long = 0L, user_id: String, email: String, country: String, name: String, dob: LocalDate, phone: String, pass: String, category: Category, createdAt: Timestamp) extends Serializable
 

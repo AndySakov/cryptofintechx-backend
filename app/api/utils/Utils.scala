@@ -1,25 +1,29 @@
 package api.utils
 
-import io.circe.Json
-import play.api.mvc.{AnyContent, Request}
+import play.api.data.FormError
+import play.api.data.format.Formatter
+
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
+import scala.util.Try
 
 object Utils {
 
-  def jsonify(text: String): Json = {
-    io.circe.parser.parse(text).getOrElse(Json.Null)
+  def exec[A](action: Future[A]): A = {
+    Await.result(action, 10 seconds)
   }
 
-  /**
-   * A function to extract the body of a request sent as xxx-form-url-encoded
-   * @param request the request to extract the body from
-   * @return the extracted body
-   */
-  def body(implicit request: Request[AnyContent]): Option[Map[String, Seq[String]]] = {
-    request.body.asFormUrlEncoded
-  }
-
-  def flash(notice: String, ntype: String): List[(String, String)] = {
-    List("notice" -> notice, "notice-type" -> s"alert-$ntype", "showing" -> "show")
+  def enumerationFormatter[E <: Enumeration](enum: E): Formatter[E#Value] = new Formatter[E#Value] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], E#Value] =
+      data.get(key).map(s => Try(enum.withName(s))).toRight(Seq(FormError(key, "error.required", Nil))) match {
+        case Left(value) => Left(value)
+        case Right(value) => value match {
+          case util.Failure(exception) => Left(Seq(FormError(key, "error.invalid_category", Nil)))
+          case util.Success(value) => Right(value)
+        }
+      }
+    override def unbind(key: String, value: E#Value): Map[String, String] = Map(key -> value.toString)
   }
 
 }
