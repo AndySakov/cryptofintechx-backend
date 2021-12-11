@@ -29,7 +29,7 @@ class HomeController @Inject()(users: UserDAO, sessions: SessionDAO, val control
   * will be called when the application receives a `POST` request with
   * a path of `/create/user`.
   */
-  def createUser(): Action[AnyContent] = requestAuthAction.async {
+  def createUser(): Action[AnyContent] = Action.async {
     implicit request: Request[AnyContent] => {
       createUserForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(UserFormWithErrorsWrites.writes(formWithErrors))),
@@ -63,7 +63,7 @@ class HomeController @Inject()(users: UserDAO, sessions: SessionDAO, val control
   * will be called when the application receives a `PUT` request with
   * a path of `/update/user/:part` where part is the detail to update.
   */
-  def updateUser(user_id: String): Action[AnyContent] = requestAuthAction.andThen(sessionAuthAction).async {
+  def updateUser(user_id: String): Action[AnyContent] = Action.andThen(sessionAuthAction).async {
     implicit request =>
     updateUserForm.bindFromRequest().fold(
       formWithErrors => Future.successful(BadRequest(UserProfileFormWithErrorsWrites.writes(formWithErrors))),
@@ -96,7 +96,7 @@ class HomeController @Inject()(users: UserDAO, sessions: SessionDAO, val control
   * will be called when the application receives a `POST` request with
   * a path of `/auth/user`.
   */
-  def authUser(): Action[AnyContent] = requestAuthAction.async{
+  def authUser(): Action[AnyContent] = Action.async{
     implicit request: Request[AnyContent] => {
       authUserForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(AuthFormWithErrorsWrites.writes(formWithErrors))),
@@ -131,7 +131,7 @@ class HomeController @Inject()(users: UserDAO, sessions: SessionDAO, val control
   * will be called when the application receives a `DELETE` request with
   * a path of `/delete/user`.
   */
-  def deleteUser(user_id: String): Action[AnyContent] = requestAuthAction.andThen(sessionAuthAction).async{
+  def deleteUser(user_id: String): Action[AnyContent] = Action.andThen(sessionAuthAction).async{
     implicit request: Request[AnyContent] =>
       users.deleteUser(user_id) match {
         case ResultSet(ResultTypeImpl.SUCCESS, result) =>
@@ -153,7 +153,7 @@ class HomeController @Inject()(users: UserDAO, sessions: SessionDAO, val control
       }
   }
 
-  def logout(): Action[AnyContent] = requestAuthAction.andThen(sessionAuthAction).async {
+  def logout(): Action[AnyContent] = Action.andThen(sessionAuthAction).async {
     implicit request: Request[AnyContent] =>
       val token = Token(request.session.get("token").getOrElse("null"))
       sessions.deleteSession(token).map(_ => Redirect("/").withNewSession)

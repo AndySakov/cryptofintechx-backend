@@ -5,7 +5,7 @@
 
 
 # CRUD STUFF
-+nocsrf
+
 POST   /api/auth/user          controllers.HomeController.authUser()
 
 POST   /api/create/user      controllers.HomeController.createUser()
