@@ -13,35 +13,35 @@ object CustomWrites {
 
   implicit object FormErrorWrites extends Writes[FormError] {
     override def writes(o: FormError): JsValue = Json.obj(
-      "field" -> Json.toJson(o.key),
+      "field"     -> Json.toJson(o.key),
       "errorCode" -> Json.toJson(o.message)
     )
   }
 
   implicit object UserFormWithErrorsWrites extends Writes[Form[User]] {
     override def writes(formWithErrors: Form[User]): JsValue = Json.obj(
-      "error" -> Json.toJson(true),
+      "error"   -> Json.toJson(true),
       "message" -> JsString("Error processing request"),
-      "reason" -> JsString("Bad or missing data in form"),
-      "fields" -> Json.toJson(formWithErrors.errors)
+      "reason"  -> JsString("Bad or missing data in form"),
+      "fields"  -> Json.toJson(formWithErrors.errors)
     )
   }
 
   implicit object UserProfileFormWithErrorsWrites extends Writes[Form[UserProfile]] {
     override def writes(formWithErrors: Form[UserProfile]): JsValue = Json.obj(
-      "error" -> Json.toJson(true),
+      "error"   -> Json.toJson(true),
       "message" -> JsString("Error processing request"),
-      "reason" -> JsString("Bad or missing data in form"),
-      "fields" -> Json.toJson(formWithErrors.errors)
+      "reason"  -> JsString("Bad or missing data in form"),
+      "fields"  -> Json.toJson(formWithErrors.errors)
     )
   }
 
   implicit object AuthFormWithErrorsWrites extends Writes[Form[(String, String)]] {
     override def writes(formWithErrors: Form[(String, String)]): JsValue = Json.obj(
-      "error" -> Json.toJson(true),
+      "error"   -> Json.toJson(true),
       "message" -> JsString("Error processing request"),
-      "reason" -> JsString("Bad or missing data in form"),
-      "fields" -> Json.toJson(formWithErrors.errors)
+      "reason"  -> JsString("Bad or missing data in form"),
+      "fields"  -> Json.toJson(formWithErrors.errors)
     )
   }
 
@@ -54,7 +54,7 @@ object CustomWrites {
 
   implicit object ErrorWrites extends Writes[Error] {
     override def writes(s: Error): JsValue = Json.obj(
-      "error" -> Json.toJson(true),
+      "error"   -> Json.toJson(true),
       "message" -> Json.toJson(s.message)
     )
   }
@@ -68,7 +68,7 @@ object CustomWrites {
 
   implicit object ServerErrorWrites extends Writes[Throwable] {
     override def writes(s: Throwable): JsValue = Json.obj(
-      "error" -> Json.toJson(true),
+      "error"   -> Json.toJson(true),
       "errCode" -> Json.toJson(s.getClass.getName.toLowerCase),
       "message" -> Json.toJson(s.getMessage)
     )
@@ -81,11 +81,11 @@ object CustomWrites {
   implicit object UserWrites extends Writes[User] {
     override def writes(u: User): JsValue = Json.obj(
       "user" -> Json.obj(
-        "user_id" -> Json.toJson(u.user_id),
-        "email" -> Json.toJson(u.email),
-        "country" -> Json.toJson(u.country),
-        "dob" -> Json.toJson(u.dob),
-        "phone" -> Json.toJson(u.phone),
+        "user_id"  -> Json.toJson(u.user_id),
+        "email"    -> Json.toJson(u.email),
+        "country"  -> Json.toJson(u.country),
+        "dob"      -> Json.toJson(u.dob),
+        "phone"    -> Json.toJson(u.phone),
         "category" -> Json.toJson(u.category)
       )
     )

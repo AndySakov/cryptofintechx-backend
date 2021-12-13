@@ -24,3 +24,5 @@ conf/db
 .vscode
 project/metals.sbt
 old
+.sbtopts
+.scalafmt.conf

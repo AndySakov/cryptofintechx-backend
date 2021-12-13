@@ -7,7 +7,7 @@ object Generator {
   private val space: Int = all.length
 
   def random(i: Int): String = {
-    val token = for(_ <- 1 to i) yield {
+    val token = for (_ <- 1 to i) yield {
       all(Random.nextInt(space))
     }
     token.mkString("")

@@ -1,6 +1,6 @@
 package api.misc
 
-object SessionTypeImpl extends Enumeration{
+object SessionTypeImpl extends Enumeration {
   type SessionType = Value
   val VALID: SessionTypeImpl.Value = Value("Valid")
   val NOT_FOUND: SessionTypeImpl.Value = Value("Not Found")

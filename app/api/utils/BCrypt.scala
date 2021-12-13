@@ -7,4 +7,3 @@ object BCrypt {
   def validate(plaintext: String, hashed: String): Boolean =
     org.mindrot.jbcrypt.BCrypt.checkpw(plaintext, hashed)
 }
-

@@ -16,22 +16,26 @@ import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) {
+class UserDAO @Inject() (val dbConfigProvider: DatabaseConfigProvider)(implicit
+  executionContext: ExecutionContext
+) {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
   val db = dbConfig.db
   import dbConfig.profile.api._
 
-  //noinspection TypeAnnotation
-  implicit val categoryMapper = MappedColumnType.base[Category, String](_.toString, CategoryImpl.withName)
+  // noinspection TypeAnnotation
+  implicit val categoryMapper =
+    MappedColumnType.base[Category, String](_.toString, CategoryImpl.withName)
 
   val Users = TableQuery[UsersTable]
 
-  /**
-   * Function to create a new user
-   * @param newbie the user to create
-   * @return a future with the result of the operation
-   */
+  /** Function to create a new user
+    * @param newbie
+    *   the user to create
+    * @return
+    *   a future with the result of the operation
+    */
   def createUser(newbie: User): ResultSet[User] = {
     Try(
       exec(db.run(Users += newbie.copy(pass = encrypt(newbie.pass))))
@@ -44,70 +48,79 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
           case _ => UnknownFailure
         }
         ResultSet(ResultTypeImpl.FAILURE, Result(message, None))
-      case Success(_) => ResultSet(ResultTypeImpl.SUCCESS, Result(UserCreateSuccessful, Some(newbie)))
+      case Success(_) =>
+        ResultSet(ResultTypeImpl.SUCCESS, Result(UserCreateSuccessful, Some(newbie)))
     }
   }
 
-  /**
-   * Function to update a users profile
-   * @param user_id the unique id of the user to update
-   * @param updated_profile the new detail
-   * @return a future with unit
-   */
+  /** Function to update a users profile
+    * @param user_id
+    *   the unique id of the user to update
+    * @param updated_profile
+    *   the new detail
+    * @return
+    *   a future with unit
+    */
   def updateUserProfile(user_id: String, updated_profile: UserProfile): ResultSet[User] = {
     getUser(user_id) match {
       case None => ResultSet(ResultTypeImpl.FAILURE, Result(UserNotFound, None))
       case Some(user) =>
-        val query = Users.filter(x => x.user_id === user.user_id).map(
-          user => (user.email, user.name, user.phone).mapTo[UserProfile]
-        ).update(updated_profile)
-        val result = exec(db.run(query andThen Users.filter(_.user_id === user.user_id).result)).headOption
+        val query = Users
+          .filter(x => x.user_id === user.user_id)
+          .map(user => (user.email, user.name, user.phone).mapTo[UserProfile])
+          .update(updated_profile)
+        val result = exec(
+          db.run(query andThen Users.filter(_.user_id === user.user_id).result)
+        ).headOption
         ResultSet(ResultTypeImpl.SUCCESS, Result(UserUpdateSuccessful, result))
     }
   }
 
-  /**
-   * Function to select a user entry in the database
-   * @param email the username of the user to select
-   * @param pass the password of the user to select
-   * @return a future with a sequence containing the user if it exists
-   */
+  /** Function to select a user entry in the database
+    * @param email
+    *   the username of the user to select
+    * @param pass
+    *   the password of the user to select
+    * @return
+    *   a future with a sequence containing the user if it exists
+    */
   def getUser(email: String, pass: String): ResultSet[_ <: User] = {
-    exec(db.run(Users.filter(v => v.email === email).result) map {
-      result =>
-        if(result.nonEmpty) {
-          if (validate(pass, result.head.pass)) {
-            ResultSet(ResultTypeImpl.SUCCESS, Result(UserAuthSuccessful, result.headOption))
-          } else {
-            ResultSet(ResultTypeImpl.FAILURE, Result(InvalidCredentials, None))
-          }
+    exec(db.run(Users.filter(v => v.email === email).result) map { result =>
+      if (result.nonEmpty) {
+        if (validate(pass, result.head.pass)) {
+          ResultSet(ResultTypeImpl.SUCCESS, Result(UserAuthSuccessful, result.headOption))
         } else {
-          ResultSet(ResultTypeImpl.FAILURE, Result(UserNotFound, None))
+          ResultSet(ResultTypeImpl.FAILURE, Result(InvalidCredentials, None))
         }
+      } else {
+        ResultSet(ResultTypeImpl.FAILURE, Result(UserNotFound, None))
+      }
     })
   }
 
-  /**
-   * Function to select a user entry in the database
-   * @param user_id the unique id of the user to select
-   * @return a future containing either a boolean or a user
-   */
+  /** Function to select a user entry in the database
+    * @param user_id
+    *   the unique id of the user to select
+    * @return
+    *   a future containing either a boolean or a user
+    */
   private def getUser(user_id: String): Option[User] = {
     exec(db.run(Users.filter(v => v.user_id === user_id).result) map {
       case result: Seq[UsersTable#TableElementType] => result.headOption
-      case _ => None
+      case _                                        => None
     })
   }
 
-  /**
-   * Function to delete a user entry from the database
-   * @param user_id the unique id of the user to delete
-   * @return a future with unit
-   */
+  /** Function to delete a user entry from the database
+    * @param user_id
+    *   the unique id of the user to delete
+    * @return
+    *   a future with unit
+    */
   def deleteUser(user_id: String): ResultSet[Boolean] = {
     getUser(user_id) match {
       case Some(user) =>
-        exec(db.run{
+        exec(db.run {
           Users.filter(_.user_id === user.user_id).delete
         } map {
           case 1 => ResultSet(ResultTypeImpl.SUCCESS, Result(UserAuthSuccessful, Some(true)))
@@ -117,7 +130,6 @@ class UserDAO @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit e
         ResultSet(ResultTypeImpl.FAILURE, Result(UserNotFound, None))
     }
   }
-
 
   class UsersTable(tag: Tag) extends Table[User](tag, "users") {
     def id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)

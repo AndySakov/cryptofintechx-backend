@@ -11,7 +11,8 @@ object Message {
   case object UserAuthSuccessful extends Success("Welcome back!")
 
   sealed abstract class Failure(text: String) extends Message(text)
-  case object UnknownFailure extends Failure("The request could not be processed. Please contact the admin for help")
+  case object UnknownFailure
+      extends Failure("The request could not be processed. Please contact the admin for help")
   case object DuplicateUserEntry extends Failure("A user already exists with this email")
   case object UserNotFound extends Failure("User not found")
   case object InvalidCredentials extends Failure("Your email or password is incorrect")
