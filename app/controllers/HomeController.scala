@@ -14,6 +14,11 @@ import javax.inject._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.language.postfixOps
+import io.sentry.Sentry
+import play.api.Configuration
+import org.apache.logging.log4j.core.Logger
+import org.apache.logging.log4j.LogManager
+import api.misc.Message
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -23,8 +28,18 @@ class HomeController @Inject() (
   sessions: SessionDAO,
   val controllerComponents: ControllerComponents,
   sessionAuthAction: SessionAuthAction,
-  requestAuthAction: RequestAuthAction
+  requestAuthAction: RequestAuthAction,
+  config: Configuration
 ) extends BaseController {
+
+  private val logger = LogManager.getLogger(this.getClass)
+
+  def notFoundAction(path: String): Action[AnyContent] = Action.async{
+    request =>
+      Future.successful(
+      NotFound(errorResponse(Message.PathNotFound(s"/${path.split("/").last}")))
+    )
+  }
 
   // CRUD STUFFS
   /** User creation handler

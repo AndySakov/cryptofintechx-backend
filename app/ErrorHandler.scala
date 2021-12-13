@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException
 import javax.inject._
 import scala.concurrent._
 import api.misc.Message.ForbiddenError
+import io.sentry.Sentry
 
 @Singleton
 class ErrorHandler @Inject() (
@@ -22,6 +23,7 @@ class ErrorHandler @Inject() (
     request: RequestHeader,
     exception: UsefulException
   ): Future[Result] = {
+    Sentry.captureException(exception)
     Future.successful(
       InternalServerError("A server error occurred while we were processing your request")
     )
@@ -33,13 +35,14 @@ class ErrorHandler @Inject() (
     )
   }
 
-  override def onNotFound(request: RequestHeader, message: String): Future[Result] = {
-    Future.successful(
-      NotFound(errorResponse(PathNotFound(request.path)))
-    )
-  }
+  // override def onNotFound(request: RequestHeader, message: String): Future[Result] = {
+  //   Future.successful(
+  //     NotFound(errorResponse(PathNotFound(request.path)))
+  //   )
+  // }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    Sentry.captureException(exception)
     exception match {
       case tx: TimeoutException =>
         Future.successful(

@@ -18,3 +18,4 @@ PUT    /api/update/user/:user_id  controllers.HomeController.updateUser(user_id:
 
 DELETE  /api/delete/user/:user_id        controllers.HomeController.deleteUser(user_id: String)
 
+GET     /*path    controllers.HomeController.notFoundAction(path: String)
