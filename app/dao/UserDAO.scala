@@ -15,6 +15,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
+import io.sentry.Sentry
 
 class UserDAO @Inject() (val dbConfigProvider: DatabaseConfigProvider)(implicit
   executionContext: ExecutionContext
@@ -45,7 +46,9 @@ class UserDAO @Inject() (val dbConfigProvider: DatabaseConfigProvider)(implicit
         val message: Message = exception match {
           case _: SQLIntegrityConstraintViolationException =>
             DuplicateUserEntry
-          case _ => UnknownFailure
+          case other: Exception => 
+            Sentry.captureException(other)
+            UnknownFailure
         }
         ResultSet(ResultTypeImpl.FAILURE, Result(message, None))
       case Success(_) =>
