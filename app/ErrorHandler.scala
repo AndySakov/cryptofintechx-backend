@@ -23,7 +23,7 @@ class ErrorHandler @Inject() (
     exception: UsefulException
   ): Future[Result] = {
     Future.successful(
-      InternalServerError("A server error occurred: " + exception.getMessage)
+      InternalServerError("A server error occurred while we were processing your request")
     )
   }
 
