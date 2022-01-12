@@ -1,21 +1,17 @@
 # Routes
-# This file defines all application routes (Higher priority routes first)
-# https://www.playframework.com/documentation/latest/ScalaRouting
-# ~~~~
 
+## This file defines all application routes (Higher priority routes first)
 
-# CRUD STUFF
+### ~~~~
 
-POST   /api/auth/user          controllers.HomeController.authUser()
+GET         /ping                                    controllers.IndexController.ping
 
-POST   /api/create/user      controllers.HomeController.createUser()
+POST        /api/user/create                         controllers.UserAccountController.signUp
 
-POST    /api/logout         controllers.HomeController.logout()
+POST        /api/user/auth                           controllers.UserAccountController.signIn
 
-# POST    /reset          controllers.HomeController.reset()
+PUT         /api/user/edit/password                  controllers.UserAccountController.changePassword
 
-PUT    /api/update/user/:user_id  controllers.HomeController.updateUser(user_id: String)
+PUT         /api/user/edit/profile/:userID           controllers.UserAccountController.updateProfile(userID: String)
 
-DELETE  /api/delete/user/:user_id        controllers.HomeController.deleteUser(user_id: String)
-
-GET     /*path    controllers.HomeController.notFoundAction(path: String)
+DELETE      /api/user/delete/:userID                 controllers.UserAccountController.deleteUser(userID: String)

@@ -1,38 +1,42 @@
 package models
 
+import com.mohiva.play.silhouette.api.{ Identity, LoginInfo }
+import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import com.mohiva.play.silhouette.password.BCryptSha256PasswordHasher
+import java.util.UUID
+import com.mohiva.play.silhouette.api.util.PasswordInfo
+import java.time.{ LocalDate, LocalDateTime }
 import java.sql.Timestamp
-import java.time.LocalDate
-import api.misc.CategoryImpl.Category
+import models.Categories.Category
 
-/** This is the User model that defines the user structure in the database
-  * @param user_id
-  *   a unique ID that all users possess
-  * @param email
-  *   the email associated with this user
-  * @param pass
-  *   the password for this user account
-  * @param name
-  *   the full name of this user
-  * @param dob
-  *   the date of birth of the user
-  * @param phone
-  *   the phone number of the user
-  * @param category
-  *   the user account class
-  * @param country
-  *   the country of origin
-  * @param createdAt
-  *   the time of creation of this user account accurate to milliseconds
+/** The user object.
+  *
+  * @param id The unique ID of the user.
+  * @param lastName the last name of the authenticated user.
+  * @param password the user's password
   */
-final case class User(
-  id: Long = 0L,
-  user_id: String,
-  email: String,
-  country: String,
-  name: String,
-  dob: LocalDate,
-  phone: String,
-  pass: String,
-  category: Category,
-  createdAt: Timestamp
-) extends Serializable
+case class User(
+    id: Option[Long],
+    userID: UUID,
+    email: String,
+    country: String,
+    fullName: String,
+    phoneNumber: Option[String],
+    password: String,
+    avatarURL: Option[String],
+    category: Category,
+    dob: LocalDate,
+    createdAt: Timestamp) extends Identity {
+
+  /** Generates login info from email
+    *
+    * @return login info
+    */
+  def loginInfo = LoginInfo(CredentialsProvider.ID, email)
+
+  /** Generates password info from password.
+    *
+    * @return password info
+    */
+  def passwordInfo = PasswordInfo(BCryptSha256PasswordHasher.ID, password)
+}
