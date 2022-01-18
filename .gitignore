@@ -26,3 +26,4 @@ project/metals.sbt
 old
 .sbtopts
 .scalafmt.conf
+markdownlint.config
