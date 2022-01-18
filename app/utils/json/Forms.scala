@@ -56,9 +56,4 @@ object Forms {
     )(ProfileUpdateRequest.apply)(ProfileUpdateRequest.unapply)
   )
 
-  val validatePinForm: Form[ValidatePinRequest] = Form(
-      mapping(
-        "transaction_pin" -> of[Int].verifying(int => int.toString.split("").length == 6)
-      )(ValidatePinRequest.apply)(ValidatePinRequest.unapply)
-    )
 }
