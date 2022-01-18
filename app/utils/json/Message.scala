@@ -21,6 +21,8 @@ object Message {
   case object SessionNotFound extends Failure("You need to login to access this resource")
   case class InvalidAuthToken(override val message: String) extends Failure(message)
   case object AuthTokenNotFound extends Failure("No auth token was sent")
+  case object InvalidApiKey extends Failure("Invalid API key")
+  case object ApiKeyNotFound extends Failure("No API key was sent")
 
   sealed abstract class Error(text: String) extends Message(text)
   case object UnknownError extends Error("An unknown error has occurred")

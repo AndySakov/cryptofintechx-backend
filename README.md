@@ -15,7 +15,7 @@ The API for the CRYPTOFINTECHX platform project
 
 | Header | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `X-Api-Key` | `string` | **Required**. API key |
+| `X-API-Key` | `string` | **Required**. API key |
 
 #### Request Body
 
@@ -42,7 +42,7 @@ Possible values for category = ['Normal', 'Silver', 'Gold', 'Diamond']
 
 | Header | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `X-Api-Key` | `string` | **Required**. API key |
+| `X-API-Key` | `string` | **Required**. API key |
 
 #### Request Body
 
@@ -62,7 +62,7 @@ Possible values for category = ['Normal', 'Silver', 'Gold', 'Diamond']
 | Header | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `X-Auth` | `string` | **Required**. User token issued at login |
-| `X-Api-Key` | `string` | **Required**. API key |
+| `X-API-Key` | `string` | **Required**. API key |
 
 #### Request Body
 
@@ -82,7 +82,7 @@ Possible values for category = ['Normal', 'Silver', 'Gold', 'Diamond']
 | Header | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `X-Auth` | `string` | **Required**. User token issued at login |
-| `X-Api-Key` | `string` | **Required**. API key |
+| `X-API-Key` | `string` | **Required**. API key |
 
 #### Request Body
 
@@ -97,7 +97,7 @@ Possible values for category = ['Normal', 'Silver', 'Gold', 'Diamond']
 | Header | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `X-Auth` | `string` | **Required**. User token issued at login |
-| `X-Api-Key` | `string` | **Required**. API key |
+| `X-API-Key` | `string` | **Required**. API key |
 
 ```http
   DELETE /api/user/delete/${user_id}
